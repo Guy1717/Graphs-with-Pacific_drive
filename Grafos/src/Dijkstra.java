@@ -8,6 +8,12 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+/**
+ * Implements Dijkstra's algorithm for finding the shortest path in a graph.
+ * <p>
+ * Provides functionality to calculate and display the shortest path between two
+ * vertices.
+ */
 public class Dijkstra {
 
     public Graph graph;
@@ -16,6 +22,15 @@ public class Dijkstra {
         this.graph = graph;
     }
 
+    /**
+     * Finds the shortest path from the initial vertex to the final vertex using
+     * Dijkstra's algorithm.
+     *
+     * @param initialVertexName the name of the starting vertex
+     * @param finalVertexName   the name of the destination vertex
+     * @return a {@link ShortestPath} object containing the path and the total
+     *         weight, or null if any vertex is not found
+     */
     public ShortestPath shortestPath(String initialVertexName, String finalVertexName) {
         Vertex initialVertex = graph.getVertexByName(initialVertexName);
         Vertex finalVertex = graph.getVertexByName(finalVertexName);
@@ -81,16 +96,25 @@ public class Dijkstra {
 
         if (path.isEmpty() || !path.get(0).equals(initialVertex)) {
             return new ShortestPath(Collections.emptyList(), Integer.MAX_VALUE); // Return empty path and infinite
-                                                                                       // weight
+                                                                                 // weight
         }
 
         return new ShortestPath(path, totalWeight);
     }
 
+    /**
+     * Prints the shortest path between two vertices along with the total weight.
+     * <p>
+     * Displays a message if the path does not exist.
+     *
+     * @param initialVertexName
+     * @param finalVertexName
+     */
     public void print(String initialVertexName, String finalVertexName) {
         ShortestPath result = shortestPath(initialVertexName, finalVertexName);
 
-        if (result.getPath().isEmpty()) { // Inexistent path
+        // Inexistent path
+        if (result == null) {
             System.out.println("Inexistent path...");
             return;
         }
@@ -101,7 +125,6 @@ public class Dijkstra {
         }
         System.out.println();
 
-        // Print the total weight
         System.out.printf("Total Weight: %d\n", result.getTotalWeight());
     }
 
