@@ -1,18 +1,19 @@
 /**
  * Represents an edge in a graph, connecting two vertices with an associated
- * weight.
+ * weight and risk level.
  */
 public class Edge {
 
     Vertex origin;
     Vertex destiny;
-    /** Indicates the distance between the origin and the destiny */
-    int weight;
+    int distance;
+    int riskLevel;
 
-    Edge(Vertex origin, Vertex destiny, int weight) {
+    Edge(Vertex origin, Vertex destiny, int distance, int riskLevel) {
         this.origin = origin;
         this.destiny = destiny;
-        this.weight = weight;
+        this.distance = distance;
+        this.riskLevel = riskLevel;
     }
 
     /**
@@ -24,10 +25,10 @@ public class Edge {
      */
     public boolean contains(Vertex vertex) {
 
-        if (vertex.name.equals(origin.name) || vertex.name.equals(destiny.name))
-            return true;
+        String origin = this.origin.name;
+        String destiny = this.destiny.name;
 
-        return false;
+        return vertex.name.equals(origin) || vertex.name.equals(destiny);
     }
 
 }

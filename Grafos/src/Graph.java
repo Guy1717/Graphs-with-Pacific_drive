@@ -16,24 +16,28 @@ public class Graph {
     boolean bidirectional;
 
     public Graph(boolean isBidirectional) {
+
         bidirectional = isBidirectional;
+
         vertices = new ArrayList<Vertex>();
         edges = new ArrayList<Edge>();
+
     }
 
     /**
      * Adds a vertex to the graph if it does not already exist.
      *
-     * @param name   the name of the vertex
-     * @param weight the weight of the vertex
+     * @param name      the name of the vertex
+     * @param riskLevel the risk level of the vertex
      */
-    public void addVertex(String name, int weight) {
+    public void addVertex(String name, int riskLevel) {
         // If already in the graph
         if (contains(name))
             return;
 
-        Vertex v = new Vertex(name, weight);
+        Vertex v = new Vertex(name, riskLevel);
         vertices.add(v);
+
     }
 
     /**
@@ -41,31 +45,38 @@ public class Graph {
      *
      * @param origin
      * @param destiny
-     * @param weight  distance times the risk level of the origin vertex
+     * @param distance distance of the edge
      */
-    public void addEdge(Vertex origin, Vertex destiny, int weight) {
-        edges.add(new Edge(origin, destiny, (weight * origin.weight)));
+    public void addEdge(Vertex origin, Vertex destiny, int distance) {
+
+        int riskLevel = origin.riskLevel + destiny.riskLevel;
+
+        Edge edge = new Edge(origin, destiny, distance, riskLevel);
+
+        edges.add(edge);
     }
 
     /**
-     * Adds an edge between two vertices identified by their names. If the graph is
-     * bidirectional,
-     * the edge is added in both directions.
+     * Adds an edge between two vertices identified by their names.
+     * <p>
+     * If the graph is bidirectional, the edge is added in both directions.
      *
      * @param originName  the name of the starting vertex
      * @param destinyName the name of the ending vertex
      * @param weight      the weight of the edge
      */
-    public void addEdge(String originName, String destinyName, int weight) {
+    public void addEdge(String originName, String destinyName, int distance) {
+
         if (contains(originName, destinyName)) {
+
             Vertex origin = getVertexByName(originName);
             Vertex destiny = getVertexByName(destinyName);
 
-            addEdge(origin, destiny, weight);
+            addEdge(origin, destiny, distance);
 
             if (bidirectional)
                 if (!origin.name.equals(destiny.name))
-                    addEdge(destiny, origin, weight);
+                    addEdge(destiny, origin, distance);
         }
     }
 
@@ -76,6 +87,7 @@ public class Graph {
      * @return the vertex with the given name, or null if not found
      */
     public Vertex getVertexByName(String name) {
+
         for (Vertex v : vertices)
             if (v.name.equals(name))
                 return v;
@@ -89,33 +101,30 @@ public class Graph {
      * @param vertexName the name of the vertex to check
      * @return true if the vertex exists, false otherwise
      */
-    public boolean contains(String vertexName) {
+    public boolean contains(String... verticesName) {
+
+        /** A map that associates vertex names with a boolean (presence status) */
+        Map<String, Boolean> checklist = new HashMap<String, Boolean>();
+
+        // Inicialize the map
+        for (String name : verticesName)
+            checklist.put(name, false);
+
+        // Check the presence in the graph
         for (Vertex v : vertices) {
-            if (v.name.equals(vertexName))
-                return true;
+
+            String name = v.name;
+
+            if (checklist.containsKey(name))
+                checklist.put(name, true);
+
         }
-        return false;
-    }
 
-    /**
-     * Checks if both the specified vertices exist in the graph.
-     *
-     * @param initialVertexName the name of the first vertex
-     * @param finalVertexName   the name of the second vertex
-     * @return true if both vertices exist, false otherwise
-     */
-    public boolean contains(String initialVertexName, String finalVertexName) {
-        boolean exists0 = false;
-        boolean exists1 = false;
+        // If any vertex is not present in the graph
+        if (checklist.containsValue(false))
+            return false;
 
-        for (Vertex v : vertices) {
-            if (v.name.equals(initialVertexName))
-                exists0 = true;
-
-            if (v.name.equals(finalVertexName))
-                exists1 = true;
-        }
-        return exists0 && exists1;
+        return true;
     }
 
     /**
@@ -166,7 +175,7 @@ public class Graph {
      */
     public void printEdge(Edge e) {
 
-        System.out.printf("%s -> %s (%d)\n", e.origin.name, e.destiny.name, e.weight);
+        System.out.printf("%s -> %s (%d)\n", e.origin.name, e.destiny.name, e.distance);
 
     }
 
@@ -206,8 +215,11 @@ public class Graph {
 
             for (Vertex destiny : adjList.get(v)) {
 
-                int weight = getEdgeWeight(v, destiny);
-                System.out.printf("[%s, %d] ", destiny.name, weight);
+                // possibility to print:
+                // int distance = getEdgeDistance(v, destiny);
+                // int riskLevel = getEdgeRisk(v, destiny);
+
+                System.out.printf("[%s] ", destiny.name);
 
             }
 
@@ -216,17 +228,36 @@ public class Graph {
     }
 
     /**
-     * Retrieves the weight of the edge between two vertices.
+     * Retrieves the distance of the edge between two vertices.
      *
      * @param origin
      * @param destiny
-     * @return the weight of the edge, or Integer.MAX_VALUE if no edge exists
+     * @return the distance of the edge, or Integer.MAX_VALUE if no edge exists
      */
-    public int getEdgeWeight(Vertex origin, Vertex destiny) {
+    public int getEdgeDistance(Vertex origin, Vertex destiny) {
         for (Edge e : edges) {
-            if (e.origin.equals(origin) && e.destiny.equals(destiny)) {
-                return e.weight;
-            }
+
+            if (e.origin.equals(origin) && e.destiny.equals(destiny))
+                return e.distance;
+
+        }
+        return Integer.MAX_VALUE; // No edge found
+    }
+
+    /**
+     * Retrieves the risk level of the edge between two vertices.
+     *
+     * @param origin
+     * @param destiny
+     * @return the risk of the edge, or Integer.MAX_VALUE if no edge exists
+     */
+    public int getEdgeRisk(Vertex origin, Vertex destiny) {
+
+        for (Edge e : edges) {
+
+            if (e.origin.equals(origin) && e.destiny.equals(destiny))
+                return e.riskLevel;
+
         }
         return Integer.MAX_VALUE; // No edge found
     }

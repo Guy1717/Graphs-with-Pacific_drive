@@ -26,6 +26,8 @@ public class Menu {
 
         String input;
         int iterations;
+        String initialVertexName;
+        String finalVertexName;
 
         Scanner keyboard = new Scanner(System.in);
 
@@ -49,9 +51,9 @@ public class Menu {
 
                         String[] splitted = input.split("_");
                         String name = splitted[0];
-                        int weight = Integer.parseInt(splitted[1]);
+                        int riskLevel = Integer.parseInt(splitted[1]);
 
-                        graph.addVertex(name, weight);
+                        graph.addVertex(name, riskLevel);
 
                     }
 
@@ -69,11 +71,11 @@ public class Menu {
                         String[] info = input.split("_");
                         String origin = info[0];
                         String destiny = info[1];
-                        String weightString = info[2];
+                        String distanceString = info[2];
 
-                        int weight = Integer.parseInt(weightString);
+                        int distance = Integer.parseInt(distanceString);
 
-                        graph.addEdge(origin, destiny, weight);
+                        graph.addEdge(origin, destiny, distance);
 
                     }
 
@@ -82,30 +84,43 @@ public class Menu {
                 case 3: // Shortest path between...
 
                     System.out.println("Initial vertex: ");
-                    String initialVertexName = keyboard.nextLine();
+                    initialVertexName = keyboard.nextLine();
 
                     System.out.println("Final vertex: ");
-                    String finalVertexName = keyboard.nextLine();
+                    finalVertexName = keyboard.nextLine();
 
-                    dijkstra.print(initialVertexName, finalVertexName);
+                    dijkstra.printPathByDistance(initialVertexName, finalVertexName);
+                    dijkstra.printPathByRisk(initialVertexName, finalVertexName);
 
                     break;
 
-                case 4: // Print vertices
+                case 4: // Safest path between...
+
+                    System.out.println("Initial vertex: ");
+                    initialVertexName = keyboard.nextLine();
+
+                    System.out.println("Final vertex: ");
+                    finalVertexName = keyboard.nextLine();
+
+                    dijkstra.printPathByRisk(initialVertexName, finalVertexName);
+
+                    break;
+
+                case 5: // Print vertices
                     graph.printVertices();
                     break;
 
-                case 5: // Print edges
+                case 6: // Print edges
                     graph.printEdges();
                     break;
 
-                case 6: // Graph info
+                case 7: // Graph info
                     System.out.println("# Graph info");
                     System.out.printf("  · %d vertices\n", graph.getTotalVertices());
                     System.out.printf("  · %d edges\n", graph.getTotalEdges());
                     break;
 
-                case 7: // Print Adjacency
+                case 8: // Print Adjacency
 
                     graph.printAdjacencyList(graph.getAdjacencyList());
 
@@ -128,16 +143,17 @@ public class Menu {
      * Displays the menu options to the user.
      */
     public void showMenu() {
-        System.out.println("===========MENU===========");
+        System.out.println("============MENU============");
         System.out.println("1. Add vertex");
         System.out.println("2. Add edge");
         System.out.println("3. Shortest path between...");
-        System.out.println("4. Print vertices");
-        System.out.println("5. Print edges");
-        System.out.println("6. Graph's info");
-        System.out.println("7. Adjacency List");
+        System.out.println("4. Safest path between...");
+        System.out.println("5. Print vertices");
+        System.out.println("6. Print edges");
+        System.out.println("7. Graph's info");
+        System.out.println("8. Adjacency List");
         System.out.println("0. Stop program");
-        System.out.println("==========================");
+        System.out.println("============================");
     }
 
 }
